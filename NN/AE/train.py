@@ -15,13 +15,13 @@ def train_model(data_dir, model_save_path, input_shape, epochs=50, batch_size=16
         batch_size (int): Batch size for training.
         metrics_path (str): Path to save training metrics.
     """
-    # Load and preprocess data
+    #Load and preprocess data using our code
     train_data, val_data, _ = load_and_preprocess_data(data_dir)
     
-    # Build the model
+    #Build the model using the code
     autoencoder = build_autoencoder(input_shape)
     
-    # Train the model
+    #Train the model
     history = autoencoder.fit(
         train_data, train_data,
         validation_data=(val_data, val_data),
@@ -30,12 +30,12 @@ def train_model(data_dir, model_save_path, input_shape, epochs=50, batch_size=16
         shuffle=True
     )
     
-    # Save the model
+    #Save the model
     os.makedirs(os.path.dirname(model_save_path), exist_ok=True)
     autoencoder.save(model_save_path)
     print(f"Model saved to {model_save_path}")
     
-    # Save training metrics
+    #Save training metrics like train loss, validation loss etc., we can specify other metrics for our purposes
     metrics = {
         "Final Training Loss": history.history['loss'][-1],
         "Final Validation Loss": history.history['val_loss'][-1],
