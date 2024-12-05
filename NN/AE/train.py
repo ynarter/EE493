@@ -16,15 +16,16 @@ def train_model(data_dir, model_save_path, input_shape, epochs=50, batch_size=16
         metrics_path (str): Path to save training metrics.
     """
     #Load and preprocess data using our code
-    train_data, val_data, _ = load_and_preprocess_data(data_dir)
+    train_input, train_target, val_input, val_target, test_input , test_target = load_and_preprocess_data(data_dir)
     
     #Build the model using the code
     autoencoder = build_autoencoder(input_shape)
+    #autoencoder.compile(optimizer='adam', loss='binary_crossentropy', metrics=['mse'])
     
     #Train the model
     history = autoencoder.fit(
-        train_data, train_data,
-        validation_data=(val_data, val_data),
+        train_input, train_target,
+        validation_data=(val_input, val_target),
         epochs=epochs,
         batch_size=batch_size,
         shuffle=True
@@ -42,7 +43,7 @@ def train_model(data_dir, model_save_path, input_shape, epochs=50, batch_size=16
         "Epochs": epochs,
         "Batch Size": batch_size
     }
-    save_metrics_to_file(metrics, metrics_path)
+    #save_metrics_to_file(metrics, metrics_path)
 
 
 print("Success 2")

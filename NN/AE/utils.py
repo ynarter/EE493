@@ -1,6 +1,13 @@
 import numpy as np
 from sklearn.metrics import mean_squared_error
 import matplotlib.pyplot as plt
+import tensorflow.keras.backend as K
+from keras.saving import register_keras_serializable
+
+@register_keras_serializable()
+def weighted_mse(y_true, y_pred):
+    weight = K.cast(K.greater(y_true, 0.1), "float32") * 10.0 + 1.0
+    return K.mean(weight * K.square(y_true - y_pred))
 
 def calculate_rmse(original, reconstructed):
     """

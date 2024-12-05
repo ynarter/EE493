@@ -3,12 +3,12 @@ from evaluate import evaluate_model
 
 if __name__ == "__main__":
     # Parameters
-    data_dir = "data/"  # Path to RA map files, maybe we can change this approach but let it stay for now
-    model_save_path = "saved_models/autoencoder_model.h5"
+    data_dir = "c:/Users/yigit/Desktop/range_angle_maps"  # Path to RA map files, maybe we can change this approach but let it stay for now
+    model_save_path = "saved_models/autoencoder_model.keras"
     training_metrics_path = "results/training_metrics.txt"
     evaluation_metrics_path = "results/evaluation_metrics.txt"
-    input_shape = (64, 64, 1)  # Example input shape, adjust based on the specific data!!!!
-    epochs = 50 #we will modify these in case of underfitting/overfitting
+    input_shape = (256, 256, 1)  # Example input shape, adjust based on the specific data!!!!
+    epochs = 20 #we will modify these in case of underfitting/overfitting
     batch_size = 16
     
     #Train the model
