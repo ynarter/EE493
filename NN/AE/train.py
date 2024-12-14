@@ -2,8 +2,9 @@ import os
 from load_data import load_and_preprocess_data
 from model import build_autoencoder
 from utils import save_metrics_to_file
+from load_map import load_images_from_folder
 
-def train_model(data_dir, model_save_path, input_shape, epochs=50, batch_size=16, metrics_path="results/training_metrics.txt"):
+def train_model(base_dir, model_save_path, input_shape, epochs=50, batch_size=16, metrics_path="results/training_metrics.txt"):
     """
     Train the autoencoder and save the trained model.
     
@@ -16,7 +17,23 @@ def train_model(data_dir, model_save_path, input_shape, epochs=50, batch_size=16
         metrics_path (str): Path to save training metrics.
     """
     #Load and preprocess data using our code
-    train_input, train_target, val_input, val_target, test_input , test_target = load_and_preprocess_data(data_dir)
+    #train_input, train_target, val_input, val_target, test_input , test_target = load_and_preprocess_data(data_dir)
+    
+    train_input_dir = os.path.join(base_dir, "train_input")
+    val_input_dir = os.path.join(base_dir, "val_target")
+    
+    train_target_dir = os.path.join(base_dir, "train_target")
+    val_target_dir = os.path.join(base_dir, "val_target")
+    
+    train_input = load_images_from_folder(train_input_dir, image_size=input_shape[:2])
+    val_input = load_images_from_folder(val_input_dir, image_size=input_shape[:2])
+    
+    train_target = load_images_from_folder(train_target_dir, image_size=input_shape[:2])
+    val_target = load_images_from_folder(val_target_dir, image_size=input_shape[:2])
+    
+    print(f"Training input shape: {train_input.shape}, Training target shape: {train_target.shape}")
+    print(f"Validation input shape: {val_input.shape}, Validation target shape: {val_target.shape}")
+    print("Data loaded and preprocessed successfully.")
     
     #Build the model using the code
     autoencoder = build_autoencoder(input_shape)
