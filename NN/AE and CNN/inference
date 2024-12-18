@@ -1,0 +1,101 @@
+import os
+import numpy as np
+import matplotlib.pyplot as plt
+from tensorflow.keras.models import load_model
+from tensorflow.image import resize
+
+
+def load_and_preprocess_npy(folder_path, target_shape=(128, 128, 1)):
+
+    data = []
+    filenames = []
+
+    for filename in sorted(os.listdir(folder_path)):
+        if filename.endswith('.npy'):
+            file_path = os.path.join(folder_path, filename)
+            npy_data = np.load(file_path)
+            
+    
+            processed_map = preprocess_single_map(npy_data, target_shape)
+            data.append(processed_map)
+            filenames.append(filename)
+
+    return np.array(data), filenames
+
+def preprocess_single_map(npy_data, target_shape):
+
+    
+    if npy_data.ndim == 3 and npy_data.shape[-1] == 2:
+      
+        npy_data = np.sqrt(npy_data[..., 0]**2 + npy_data[..., 1]**2)
+    elif npy_data.ndim > 2:
+       
+        npy_data = npy_data.squeeze()
+
+
+    npy_data = npy_data / np.max(npy_data)
+
+    npy_data_resized = resize(npy_data[..., np.newaxis], target_shape[:2]).numpy()
+
+
+    if len(npy_data_resized.shape) == 2:
+        npy_data_resized = np.expand_dims(npy_data_resized, axis=-1)
+
+    return npy_data_resized
+
+
+def run_inference(model, data):
+
+    probabilities = model.predict(data)
+    labels = (probabilities > 0.5).astype(int)
+    return probabilities, labels
+
+
+def save_inference_results(filenames, probabilities, labels, output_file):
+
+    with open(output_file, "w") as f:
+        f.write("Filename\tProbability\tPredicted Label\n")
+        for i, filename in enumerate(filenames):
+            f.write(f"{filename}\t{probabilities[i][0]:.4f}\t{labels[i][0]}\n")
+    print(f"Results saved to {output_file}")
+
+
+def visualize_predictions(data, probabilities, labels, filenames, num_samples=10):
+
+    num_samples = min(num_samples, len(data))  # Limit to available samples
+    plt.figure(figsize=(15, 5))
+
+    for i in range(num_samples):
+        plt.subplot(2, 5, i + 1)
+        plt.imshow(data[i].squeeze(), cmap="gray")
+        plt.title(f"{filenames[i]}\nScore: {probabilities[i][0]:.4f}\nPred: {labels[i][0]}")
+        plt.axis("off")
+
+    plt.tight_layout()
+    plt.show()
+
+
+if __name__ == "__main__":
+  
+    input_npy_folder = "c:/Users/user/Documents/bitirme_cnn/0000"  # Path to your .npy files
+    model_path = "saved_models/model.keras"  # Path to the trained model
+    output_results_file = "inference_results.txt"  # Path to save results
+
+
+    target_shape = (128, 128, 1)  # Model input shape
+    preprocessed_data, filenames = load_and_preprocess_npy(input_npy_folder, target_shape)
+    print(f"Loaded and preprocessed {len(preprocessed_data)} files.")
+
+ 
+    model = load_model(model_path)
+
+   
+    probabilities, predicted_labels = run_inference(model, preprocessed_data)
+
+
+    save_inference_results(filenames, probabilities, predicted_labels, output_results_file)
+
+ 
+    visualize_predictions(preprocessed_data, probabilities, predicted_labels, filenames, num_samples=10)
+
+
