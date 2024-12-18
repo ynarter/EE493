@@ -62,7 +62,7 @@ def save_inference_results(filenames, probabilities, labels, output_file):
 
 def visualize_predictions(data, probabilities, labels, filenames, num_samples=10):
 
-    num_samples = min(num_samples, len(data))  # Limit to available samples
+    num_samples = min(num_samples, len(data))  
     plt.figure(figsize=(15, 5))
 
     for i in range(num_samples):
@@ -77,12 +77,12 @@ def visualize_predictions(data, probabilities, labels, filenames, num_samples=10
 
 if __name__ == "__main__":
   
-    input_npy_folder = "c:/Users/user/Documents/bitirme_cnn/0000"  # Path to your .npy files
-    model_path = "saved_models/model.keras"  # Path to the trained model
-    output_results_file = "inference_results.txt"  # Path to save results
+    input_npy_folder = "c:/Users/user/Documents/bitirme_cnn/0000" 
+    model_path = "saved_models/model.keras"  
+    output_results_file = "inference_results.txt"  
 
 
-    target_shape = (128, 128, 1)  # Model input shape
+    target_shape = (128, 128, 1)  
     preprocessed_data, filenames = load_and_preprocess_npy(input_npy_folder, target_shape)
     print(f"Loaded and preprocessed {len(preprocessed_data)} files.")
 
